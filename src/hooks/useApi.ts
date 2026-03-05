@@ -35,42 +35,62 @@ export function useDashboardData(): DashboardData {
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const refresh = useCallback(() => {
-    setBriefing(s => ({ ...s, loading: true, error: null }));
-    setCalendar(s => ({ ...s, loading: true, error: null }));
-    setEmails(s => ({ ...s, loading: true, error: null }));
-    setTeams(s => ({ ...s, loading: true, error: null }));
-    setDocuments(s => ({ ...s, loading: true, error: null }));
-    setCommitments(s => ({ ...s, loading: true, error: null }));
+  const refresh = useCallback(async () => {
+    // Status is fast — fire immediately
     setStatus(s => ({ ...s, loading: true, error: null }));
-
-    fetchEndpoint<BriefingData & { source: string }>('/api/briefing')
-      .then(d => setBriefing({ data: d, loading: false, error: null }))
-      .catch(e => setBriefing(s => ({ ...s, loading: false, error: (e as Error).message })));
-
-    fetchEndpoint<{ meetings: CalendarEvent[]; source: string }>('/api/calendar')
-      .then(d => setCalendar({ data: d.meetings, loading: false, error: null }))
-      .catch(e => setCalendar(s => ({ ...s, loading: false, error: (e as Error).message })));
-
-    fetchEndpoint<{ emails: Email[]; source: string }>('/api/emails')
-      .then(d => setEmails({ data: d.emails, loading: false, error: null }))
-      .catch(e => setEmails(s => ({ ...s, loading: false, error: (e as Error).message })));
-
-    fetchEndpoint<{ messages: TeamsMessage[]; source: string }>('/api/teams')
-      .then(d => setTeams({ data: d.messages, loading: false, error: null }))
-      .catch(e => setTeams(s => ({ ...s, loading: false, error: (e as Error).message })));
-
-    fetchEndpoint<{ documents: Document[]; source: string }>('/api/documents')
-      .then(d => setDocuments({ data: d.documents, loading: false, error: null }))
-      .catch(e => setDocuments(s => ({ ...s, loading: false, error: (e as Error).message })));
-
-    fetchEndpoint<{ commitments: Commitment[]; source: string }>('/api/commitments')
-      .then(d => setCommitments({ data: d.commitments, loading: false, error: null }))
-      .catch(e => setCommitments(s => ({ ...s, loading: false, error: (e as Error).message })));
-
     fetchEndpoint<StatusData>('/api/status')
       .then(d => setStatus({ data: d, loading: false, error: null }))
       .catch(e => setStatus(s => ({ ...s, loading: false, error: (e as Error).message })));
+
+    // Load panels sequentially — WorkIQ processes one query at a time
+    const panels: Array<() => Promise<void>> = [
+      async () => {
+        setCalendar(s => ({ ...s, loading: true, error: null }));
+        try {
+          const d = await fetchEndpoint<{ meetings: CalendarEvent[]; source: string }>('/api/calendar');
+          setCalendar({ data: d.meetings, loading: false, error: null });
+        } catch (e) { setCalendar(s => ({ ...s, loading: false, error: (e as Error).message })); }
+      },
+      async () => {
+        setEmails(s => ({ ...s, loading: true, error: null }));
+        try {
+          const d = await fetchEndpoint<{ emails: Email[]; source: string }>('/api/emails');
+          setEmails({ data: d.emails, loading: false, error: null });
+        } catch (e) { setEmails(s => ({ ...s, loading: false, error: (e as Error).message })); }
+      },
+      async () => {
+        setTeams(s => ({ ...s, loading: true, error: null }));
+        try {
+          const d = await fetchEndpoint<{ messages: TeamsMessage[]; source: string }>('/api/teams');
+          setTeams({ data: d.messages, loading: false, error: null });
+        } catch (e) { setTeams(s => ({ ...s, loading: false, error: (e as Error).message })); }
+      },
+      async () => {
+        setCommitments(s => ({ ...s, loading: true, error: null }));
+        try {
+          const d = await fetchEndpoint<{ commitments: Commitment[]; source: string }>('/api/commitments');
+          setCommitments({ data: d.commitments, loading: false, error: null });
+        } catch (e) { setCommitments(s => ({ ...s, loading: false, error: (e as Error).message })); }
+      },
+      async () => {
+        setDocuments(s => ({ ...s, loading: true, error: null }));
+        try {
+          const d = await fetchEndpoint<{ documents: Document[]; source: string }>('/api/documents');
+          setDocuments({ data: d.documents, loading: false, error: null });
+        } catch (e) { setDocuments(s => ({ ...s, loading: false, error: (e as Error).message })); }
+      },
+      async () => {
+        setBriefing(s => ({ ...s, loading: true, error: null }));
+        try {
+          const d = await fetchEndpoint<BriefingData & { source: string }>('/api/briefing');
+          setBriefing({ data: d, loading: false, error: null });
+        } catch (e) { setBriefing(s => ({ ...s, loading: false, error: (e as Error).message })); }
+      },
+    ];
+
+    for (const loadPanel of panels) {
+      await loadPanel();
+    }
 
     setLastRefresh(new Date());
   }, []);
