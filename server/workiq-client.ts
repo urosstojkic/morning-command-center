@@ -47,10 +47,11 @@ export class WorkIQClient {
 
     console.log(`🤖 Asking WorkIQ: "${question.substring(0, 80)}..."`);
 
-    const result = await this.client.callTool({
-      name: "ask_work_iq",
-      arguments: { question },
-    });
+    const result = await this.client.callTool(
+      { name: "ask_work_iq", arguments: { question } },
+      undefined,
+      { timeout: 120_000 },
+    );
 
     const content = result.content;
     if (Array.isArray(content)) {
