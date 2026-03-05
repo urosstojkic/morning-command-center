@@ -7,7 +7,7 @@ export class WorkIQClient {
   private connected = false;
 
   async connect(): Promise<void> {
-    const command = process.env.WORKIQ_COMMAND ?? "npx -y @anthropic-ai/workiq-mcp";
+    const command = process.env.WORKIQ_COMMAND ?? "npx -y @microsoft/workiq mcp";
     const parts = command.split(/\s+/);
     const cmd = parts[0];
     const args = parts.slice(1);
