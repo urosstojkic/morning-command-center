@@ -12,6 +12,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.27.1",
     "cors": "^2.8.6",
     "date-fns": "^4.1.0",
     "express": "^5.2.1",
