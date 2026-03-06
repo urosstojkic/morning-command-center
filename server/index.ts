@@ -13,7 +13,7 @@ import {
 const app = express();
 const PORT = parseInt(process.env.PORT ?? "3001", 10);
 
-app.use(cors({ origin: "http://localhost:5173" }));
+app.use(cors({ origin: /^http:\/\/localhost:\d+$/ }));
 app.use(express.json());
 
 const workiq = new WorkIQClient();

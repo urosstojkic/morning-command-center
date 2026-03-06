@@ -25,23 +25,23 @@ function App() {
           <div className="animate-fade-in md:col-span-2">
             <BriefingPanel data={briefing.data} loading={briefing.loading} />
           </div>
-          <div className="animate-fade-in" style={{ animationDelay: '0.1s', opacity: 0 }}>
+          <div className="animate-fade-in delay-100">
             <CalendarPanel data={calendar.data} loading={calendar.loading} />
           </div>
 
           {/* Row 2: Emails + Teams */}
-          <div className="animate-fade-in" style={{ animationDelay: '0.15s', opacity: 0 }}>
+          <div className="animate-fade-in delay-150">
             <EmailPanel data={emails.data} loading={emails.loading} />
           </div>
-          <div className="animate-fade-in" style={{ animationDelay: '0.2s', opacity: 0 }}>
+          <div className="animate-fade-in delay-200">
             <TeamsPanel data={teams.data} loading={teams.loading} />
           </div>
 
           {/* Row 3: Commitments + Documents */}
-          <div className="animate-fade-in md:col-span-2 xl:col-span-2" style={{ animationDelay: '0.25s', opacity: 0 }}>
+          <div className="animate-fade-in md:col-span-2 xl:col-span-2 delay-250">
             <CommitmentsPanel data={commitments.data} loading={commitments.loading} />
           </div>
-          <div className="animate-fade-in" style={{ animationDelay: '0.3s', opacity: 0 }}>
+          <div className="animate-fade-in delay-300">
             <DocumentsPanel data={documents.data} loading={documents.loading} />
           </div>
         </div>
