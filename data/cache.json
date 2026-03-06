@@ -1,0 +1,53 @@
+{
+  "briefing": {
+    "summary": "Friday, 6 March 2026 — You have 9 meetings today. Currently in Focus Time (14:00–15:00). Two key meetings ahead: FSI Community All-hands (15:00) and Signal Iduna + Uli Homann (16:30). High-priority: 2 expense reports pending approval, Nürnberger scheduling confirmation needed, HUK-COBURG exec meeting reply pending. Check RSAC 2026 Workback Deadlines sheet for near-term dates.",
+    "highlights": [
+      "2 expense reports awaiting your approval (204 EUR + 356 EUR)",
+      "Nürnberger confirmed workshop dates — send calendar invites for 17.03 and 18.03",
+      "HUK-COBURG: Stephan Baier proposing next week for exec meeting — confirm availability",
+      "Signal Iduna blocked on Purview/Defender roles — find CSA resource",
+      "16:30 customer meeting with Signal Iduna + Uli Homann — prep talking points"
+    ],
+    "generatedAt": "2026-03-06T14:30:00.000Z"
+  },
+  "calendar": [
+    {"id":"m1","title":"Sync Uros / Ingo","time":"09:20","duration":"10 min","attendees":["Ingo Quast"],"location":"Teams Call","isHighPriority":false},
+    {"id":"m2","title":"Nürnberger Versicherung FY27","time":"10:00","duration":"25 min","attendees":["Nürnberger Team"],"location":"Teams","isHighPriority":true},
+    {"id":"m3","title":"Synch Insurance Demo Inspo for DB","time":"11:00","duration":"30 min","attendees":["Katharina Koenches"],"location":"Teams","isHighPriority":false},
+    {"id":"m4","title":"Lunch","time":"12:00","duration":"1 hour","attendees":[],"location":"","isHighPriority":false},
+    {"id":"m5","title":"Abstimmung aktuelle Themen Signal Iduna und Microsoft","time":"13:00","duration":"45 min","attendees":["Ingo Quast","Signal Iduna (external)"],"location":"Teams","isHighPriority":true},
+    {"id":"m6","title":"Focus Time","time":"14:00","duration":"1 hour","attendees":[],"location":"","isHighPriority":false},
+    {"id":"m7","title":"Monthly FSI Community All-hands Call","time":"15:00","duration":"1 hour","attendees":["Michael Zwiefler","FSI Community"],"location":"Teams","isHighPriority":false},
+    {"id":"m8","title":"Virtual meeting between SIGNAL IDUNA and Uli Homann","time":"16:30","duration":"1 hour","attendees":["Uli Homann","Stefan Lemke","Signal Iduna"],"location":"Teams","isHighPriority":true}
+  ],
+  "emails": [
+    {"id":"e1","from":"MSApprovalNotifications","subject":"Reminder: Expense Report 204.00 EUR – Pending Approval","preview":"Expense report D10720000134105 awaiting your approval in MS Approvals","receivedAt":"Today","isUrgent":true,"hasAttachment":false},
+    {"id":"e2","from":"MSApprovalNotifications","subject":"Reminder: Expense Report 356.30 EUR – Pending Approval","preview":"Expense report D10720000134102 pending approval — requires timely action","receivedAt":"Today","isUrgent":true,"hasAttachment":false},
+    {"id":"e3","from":"Lukas Haßold (NÜRNBERGER)","subject":"[EXTERN] Zugesagt: NÜRNBERGER Datenklassifikation & M365 Copilot","preview":"NÜRNBERGER confirms participation — open coordination points remain","receivedAt":"Today","isUrgent":false,"hasAttachment":false},
+    {"id":"e4","from":"Hedwig Baumer (NÜRNBERGER)","subject":"Re: NÜRNBERGER Datenklassifikation & M365 Copilot","preview":"Asks whether proposed meeting can be rescheduled due to conflict — awaiting your response","receivedAt":"Today","isUrgent":false,"hasAttachment":false},
+    {"id":"e5","from":"Ingo Quast","subject":"AW: Kurze Zusammenfassung Strategieabstimmung ALH & Microsoft","preview":"Follow-up on Modial workshop planning (target May, Frankfurt) — needs contact and logistics confirmation","receivedAt":"Yesterday","isUrgent":false,"hasAttachment":false},
+    {"id":"e6","from":"Stephan Baier (HUK-COBURG)","subject":"Re: INFO: Neuer Versuch – Vorbereitung Mgmt-Meeting Microsoft / HUK","preview":"Proposes concrete time window next week, suggests adding additional HUK stakeholder — awaiting alignment","receivedAt":"Yesterday","isUrgent":false,"hasAttachment":false}
+  ],
+  "teams": [
+    {"id":"t1","from":"Ingo Quast","channel":"Signal Iduna","preview":"Shared customer presentation for Kyndryl Cloud Uplift First Call","timestamp":"Yesterday","mentions":false},
+    {"id":"t2","from":"Uros Stojkic","channel":"Insurance Team","preview":"Shared Loop component: Microsoft HanRe Monthly Strategy JF 2026-03-03","timestamp":"Wednesday","mentions":false},
+    {"id":"t3","from":"Katharina Koenches","channel":"Insurance Demo","preview":"Synch scheduled for insurance demo inspiration content for DB","timestamp":"Today","mentions":true}
+  ],
+  "documents": [
+    {"id":"d1","title":"Uli Homann Briefing Signal Iduna","sharedBy":"Uros Stojkic","sharedAt":"Wednesday","type":"docx","url":"#"},
+    {"id":"d2","title":"EC EMEA Briefing Document Uli Homann JAN2026","sharedBy":"Christopher Anton","sharedAt":"Wednesday","type":"docx","url":"#"},
+    {"id":"d3","title":"Briefing Tech Connect + AI Tour","sharedBy":"Uros Stojkic","sharedAt":"Tuesday","type":"pptx","url":"#"},
+    {"id":"d4","title":"Customer Presentation Kyndryl Cloud Uplift","sharedBy":"Sami Kohlus","sharedAt":"Tuesday","type":"pptx","url":"#"},
+    {"id":"d5","title":"Microsoft HanRe Monthly Strategy JF","sharedBy":"Uros Stojkic","sharedAt":"Wednesday","type":"loop","url":"#"},
+    {"id":"d6","title":"L100 Addressing Sovereignty Requirements","sharedBy":"Uros Stojkic","sharedAt":"Tuesday","type":"pptx","url":"#"}
+  ],
+  "commitments": [
+    {"id":"c1","description":"Find CSA & schedule scoping call for Signal Iduna Purview/Defender roles","source":"Email","dueDate":"This week","priority":"high","status":"pending"},
+    {"id":"c2","description":"Send calendar invites for Nürnberger workshops (KI Governance 17.03, Data Classification 18.03)","source":"Email","dueDate":"Today","priority":"high","status":"pending"},
+    {"id":"c3","description":"Confirm availability for HUK-COBURG exec meeting (next Tuesday 14:00-16:30)","source":"Email","dueDate":"Today","priority":"high","status":"pending"},
+    {"id":"c4","description":"Share Copilot compliance/governance materials with Nürnberger","source":"Email","dueDate":"This week","priority":"medium","status":"pending"},
+    {"id":"c5","description":"Validate SAP/Copilot statements in Bogdan's summary (technical accuracy)","source":"Email","dueDate":"This week","priority":"medium","status":"pending"},
+    {"id":"c6","description":"Connect with Christodulos Xanthas for Nürnberger Network Data Security","source":"Email","dueDate":"This week","priority":"medium","status":"pending"},
+    {"id":"c7","description":"Approve 2 pending expense reports (204 EUR + 356 EUR)","source":"Email","dueDate":"Today","priority":"high","status":"pending"}
+  ]
+}

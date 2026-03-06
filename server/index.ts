@@ -1,6 +1,8 @@
 import express from "express";
 import cors from "cors";
-import { WorkIQClient } from "./workiq-client.js";
+import { readFileSync, existsSync } from "fs";
+import { resolve, dirname } from "path";
+import { fileURLToPath } from "url";
 import {
   demoBriefing,
   demoCalendar,
@@ -10,88 +12,88 @@ import {
   demoCommitments,
 } from "./demo-data.js";
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const CACHE_PATH = resolve(__dirname, "..", "data", "cache.json");
+
 const app = express();
 const PORT = parseInt(process.env.PORT ?? "3001", 10);
 
 app.use(cors({ origin: /^http:\/\/localhost:\d+$/ }));
 app.use(express.json());
 
-const workiq = new WorkIQClient();
-let workiqAvailable = false;
+// --- Cache loading ---
 
-// --- Helper: query WorkIQ or fall back to demo data ---
+interface CacheData {
+  briefing?: unknown;
+  calendar?: unknown[];
+  emails?: unknown[];
+  teams?: unknown[];
+  documents?: unknown[];
+  commitments?: unknown[];
+}
 
-async function queryOrFallback<T>(
-  question: string,
-  fallback: T,
-  parse?: (raw: string) => T,
-): Promise<{ data: T; source: "workiq" | "demo" }> {
-  if (!workiqAvailable) {
-    return { data: fallback, source: "demo" };
+let cache: CacheData | null = null;
+let dataSource: "cache" | "demo" = "demo";
+
+function loadCache(): boolean {
+  if (!existsSync(CACHE_PATH)) {
+    console.warn(`🟡 Cache file not found: ${CACHE_PATH}`);
+    return false;
   }
   try {
-    const raw = await workiq.ask(question);
-    return { data: parse ? parse(raw) : (raw as unknown as T), source: "workiq" };
+    const raw = readFileSync(CACHE_PATH, "utf-8");
+    cache = JSON.parse(raw) as CacheData;
+    dataSource = "cache";
+    console.log(`🟢 Loaded cached data from ${CACHE_PATH}`);
+    return true;
   } catch (err) {
-    console.error("⚠️  WorkIQ query failed, using demo data:", (err as Error).message);
-    return { data: fallback, source: "demo" };
+    console.error(`⚠️  Failed to parse cache file: ${(err as Error).message}`);
+    return false;
   }
 }
 
 // --- API Routes ---
 
-app.get("/api/briefing", async (_req, res) => {
+app.get("/api/briefing", (_req, res) => {
   console.log("📋 GET /api/briefing");
-  const { data, source } = await queryOrFallback(
-    "Give me a comprehensive morning briefing. Summarize my most important meetings today, urgent emails, key Teams messages, and any action items I need to address. Be concise but thorough.",
-    demoBriefing,
-  );
-  res.json({ ...( source === "demo" ? data : { summary: data, highlights: [], generatedAt: new Date().toISOString() }), source });
+  const data = cache?.briefing ?? demoBriefing;
+  const source = cache?.briefing ? "cache" : "demo";
+  res.json({ ...(data as object), source });
 });
 
-app.get("/api/calendar", async (_req, res) => {
+app.get("/api/calendar", (_req, res) => {
   console.log("📅 GET /api/calendar");
-  const { data, source } = await queryOrFallback(
-    "What meetings do I have scheduled for today? Include the meeting title, time, duration, attendees, and location or link for each one.",
-    demoCalendar,
-  );
-  res.json({ meetings: source === "demo" ? data : data, source });
+  const data = cache?.calendar ?? demoCalendar;
+  const source = cache?.calendar ? "cache" : "demo";
+  res.json({ meetings: data, source });
 });
 
-app.get("/api/emails", async (_req, res) => {
+app.get("/api/emails", (_req, res) => {
   console.log("📧 GET /api/emails");
-  const { data, source } = await queryOrFallback(
-    "What are my most important and urgent emails? Show me the sender, subject, a brief preview, and whether they have attachments. Focus on emails that need my attention today.",
-    demoEmails,
-  );
-  res.json({ emails: source === "demo" ? data : data, source });
+  const data = cache?.emails ?? demoEmails;
+  const source = cache?.emails ? "cache" : "demo";
+  res.json({ emails: data, source });
 });
 
-app.get("/api/teams", async (_req, res) => {
+app.get("/api/teams", (_req, res) => {
   console.log("💬 GET /api/teams");
-  const { data, source } = await queryOrFallback(
-    "What are the most recent and important Teams messages I should be aware of? Include the sender, channel, message preview, and whether I was mentioned.",
-    demoTeams,
-  );
-  res.json({ messages: source === "demo" ? data : data, source });
+  const data = cache?.teams ?? demoTeams;
+  const source = cache?.teams ? "cache" : "demo";
+  res.json({ messages: data, source });
 });
 
-app.get("/api/documents", async (_req, res) => {
+app.get("/api/documents", (_req, res) => {
   console.log("📄 GET /api/documents");
-  const { data, source } = await queryOrFallback(
-    "What documents have been recently shared with me or updated in my team? Include the document title, who shared it, when, and the file type.",
-    demoDocuments,
-  );
-  res.json({ documents: source === "demo" ? data : data, source });
+  const data = cache?.documents ?? demoDocuments;
+  const source = cache?.documents ? "cache" : "demo";
+  res.json({ documents: data, source });
 });
 
-app.get("/api/commitments", async (_req, res) => {
+app.get("/api/commitments", (_req, res) => {
   console.log("✅ GET /api/commitments");
-  const { data, source } = await queryOrFallback(
-    "What are my current action items, follow-ups, and commitments? Include where each one came from (email, meeting, Teams), the deadline, and priority level.",
-    demoCommitments,
-  );
-  res.json({ commitments: source === "demo" ? data : data, source });
+  const data = cache?.commitments ?? demoCommitments;
+  const source = cache?.commitments ? "cache" : "demo";
+  res.json({ commitments: data, source });
 });
 
 app.get("/api/status", (_req, res) => {
@@ -100,34 +102,42 @@ app.get("/api/status", (_req, res) => {
     status: "ok",
     uptime: process.uptime(),
     workiq: {
-      connected: workiqAvailable,
-      mode: workiqAvailable ? "live" : "demo",
+      connected: dataSource === "cache",
+      mode: dataSource === "cache" ? "live" : "demo",
     },
     timestamp: new Date().toISOString(),
   });
 });
 
+app.post("/api/refresh", (_req, res) => {
+  console.log("🔄 POST /api/refresh — reloading cache from disk");
+  const ok = loadCache();
+  res.json({
+    success: ok,
+    source: dataSource,
+    message: ok ? "Cache reloaded from disk" : "Cache not available, using demo data",
+  });
+});
+
 // --- Startup ---
 
-async function start() {
+function start() {
   console.log("🌅 Morning Command Center — Backend Server");
   console.log("━".repeat(50));
 
-  try {
-    await workiq.connect();
-    workiqAvailable = true;
-    console.log("🟢 WorkIQ MCP: connected — serving live data");
-  } catch (err) {
-    workiqAvailable = false;
-    console.warn("🟡 WorkIQ MCP: not available — serving demo data");
-    console.warn(`   Reason: ${(err as Error).message}`);
+  loadCache();
+
+  if (dataSource === "cache") {
+    console.log("🟢 Data source: file cache (data/cache.json)");
+  } else {
+    console.log("🟡 Data source: demo data (cache file not found)");
   }
 
   app.listen(PORT, () => {
     console.log("━".repeat(50));
     console.log(`🚀 Server running at http://localhost:${PORT}`);
     console.log(`📡 CORS enabled for http://localhost:5173`);
-    console.log(`📊 Mode: ${workiqAvailable ? "LIVE (WorkIQ)" : "DEMO (fallback data)"}`);
+    console.log(`📊 Mode: ${dataSource === "cache" ? "CACHED (real data)" : "DEMO (fallback data)"}`);
     console.log("━".repeat(50));
   });
 }
